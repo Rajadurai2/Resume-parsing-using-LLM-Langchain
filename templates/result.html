@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        Resume Score Result
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Your Resume Score</h5>
+        <p class="card-text">Your resume scored: <strong>{{ score }}%</strong> against the job description.</p>
+        <a href="/" class="btn btn-secondary">Try Again</a>
+    </div>
+</div>
+{% endblock %}

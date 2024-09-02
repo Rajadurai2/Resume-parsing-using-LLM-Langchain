@@ -1,49 +1,83 @@
 # import libraries
 
-from openai import OpenAI
 import yaml
 
+from pdfminer3.layout import LAParams, LTTextBox
+from pdfminer3.pdfpage import PDFPage
+from pdfminer3.pdfinterp import PDFResourceManager
+from pdfminer3.pdfinterp import PDFPageInterpreter
+from pdfminer3.converter import TextConverter
+import io, random
+
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+import json
 api_key = None
-CONFIG_PATH = r"config.yaml"
 
-with open(CONFIG_PATH) as file:
-    data = yaml.load(file, Loader=yaml.FullLoader)
-    api_key = data['OPENAI_API_KEY']
 
-def ats_extractor(resume_data):
 
-    prompt = '''
-    You are an AI bot designed to act as a professional for parsing resumes. You are given with resume and your job is to extract the following information from the resume:
-    1. full name
-    2. email id
-    3. github portfolio
-    4. linkedin id
-    5. employment details
-    6. technical skills
-    7. soft skills
-    Give the extracted information in json format only
-    '''
 
-    openai_client = OpenAI(
-        api_key = api_key
-    )    
+def pdf_reader(file):
+    resource_manager = PDFResourceManager()
+    fake_file_handle = io.StringIO()
+    converter = TextConverter(resource_manager, fake_file_handle, laparams=LAParams())
+    page_interpreter = PDFPageInterpreter(resource_manager, converter)
+    with open(file, 'rb') as fh:
+        for page in PDFPage.get_pages(fh,
+                                      caching=True,
+                                      check_extractable=True):
+            page_interpreter.process_page(page)
+            print(page)
+        text = fake_file_handle.getvalue()
 
-    messages=[
-        {"role": "system", 
-        "content": prompt}
-        ]
-    
-    user_content = resume_data
-    
-    messages.append({"role": "user", "content": user_content})
+    # close open handles
+    converter.close()
+    fake_file_handle.close()
+    return text
 
-    response = openai_client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=messages,
-                temperature=0.0,
-                max_tokens=1500)
-        
-    data = response.choices[0].message.content
 
-    #print(data)
-    return data
+def parse_data(llm,resume_text):
+        # Define the prompt template for parsing resumes
+    # resume_parsing_prompt = PromptTemplate(
+    #     input_variables=["resume_text"],
+    #     template="Parse the following resume and extract person details,relevant skills, experiences, and qualifications:\n\n{resume_text}\n\nOutput as JSON."
+    # )
+
+    resume_parsing_prompt = PromptTemplate(
+    input_variables=["resume_text"],
+    template=(
+        "Parse the following resume and extract the person details, relevant skills, experiences, and qualifications. "
+        "Ensure the output is a JSON object with the following keys: "
+        "'personDetails', 'skills', 'experiences', 'certifications','qualifications','achievements','projects','hobbies'. "
+        "If a field is not available, return it as an empty string or an empty list.\n\n"
+        "{resume_text}\n\n"
+        "Output as JSON with the specified keys."
+    )
+)
+
+    parsing_chain = LLMChain(llm=llm, prompt=resume_parsing_prompt)
+    parsed_data = parsing_chain.run({"resume_text": resume_text})
+    parsed_data = json.loads("".join(parsed_data.split("\n")[1:-1]))
+    return parsed_data
+
+def get_score(llm,resume_text):
+    ranking_prompt = PromptTemplate(
+    input_variables=["resume_text"],
+    template="Rate this resume 0 - 10 for each criteria grammar_mistakes,skills,projects "
+    "Ensure the output is a JSON object with the following keys: "
+        "'grammar_mistakes','skills','projects'. "
+    ":\n\n{resume_text}\n\nOutput as dict")
+
+    rank_chain = LLMChain(llm=llm, prompt=ranking_prompt)
+    rank = rank_chain.run({"resume_text":resume_text})
+    rank = json.loads("".join(rank.split("\n")[1:-1]))
+    return rank
+
+def get_suggestion(llm,resume_text):
+    get_mistakes = PromptTemplate(
+    input_variables=["resume_text"],
+    template="Tell 10 suggetions to improve this resume:\n\n{resume_text}\n\nOutput as string lists")
+
+    suggestion_chain = LLMChain(llm=llm,prompt=get_mistakes)
+    suggestions = suggestion_chain.run({"resume_text":resume_text})
+    return suggestions
