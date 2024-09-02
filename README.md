@@ -1,43 +1,59 @@
-# Resume Parser App (Gen AI + Flask)
+# Resume Parser Using Large Language Models and Langchain
+#### Problem with Traditional ATS Software: 
+Traditional ATS systems often require manual adjustments for different job domains and industries. This means each ATS setup needs to be customized for various fields, leading to a lot of time and effort spent on configuring and maintaining different parsing rules and keyword sets for each domain. This approach is not only labor-intensive but also prone to inconsistencies and errors.
 
-### Objective
+#### How AI Improves This:: 
+AI-powered resume parsers automatically adapt to various job domains without needing manual adjustments. They use advanced machine learning algorithms and NLP to understand and extract relevant information from resumes across different industries and job roles. This reduces the need for domain-specific customization, streamlining the process and ensuring more consistent and accurate parsing of resumes.
 
-Creating a resume parser app using Flask is a great way to help job seekers test the ATS (Applicant Tracking System) friendliness of their resumes. The app allows users to upload their resumes in PDF format, which are then parsed to extract various pieces of information such as full name, email ID, GitHub portfolio, LinkedIn ID, employment details, technical skills, and soft skills. The extracted information is then presented in JSON format, providing users with valuable insights into the effectiveness of their resumes.
-
-To build such an app, you can leverage various tools and libraries, including Python, Flask, Pyresparser, pdfminer.six, docx2txt, and NLP (natural language processing) libraries such as nltk and spacy. These tools enable the extraction of essential information from resumes in PDF and DOCx formats, making the process automated and efficient.
-
-The app's functionality aligns with the growing need for streamlined recruitment processes and the increasing reliance on technology to evaluate and process job applications. By providing users with a detailed analysis of their resumes, the app empowers job seekers to optimize their resumes for better visibility and compatibility with ATS.
 
 ### Sneak Peak of the App
 ![image](https://github.com/pik1989/Resume-Parser-OpenAI/assets/34673684/5d206207-1b25-4dbe-8e11-add701b632e7)
 
-#### Overview: 
-This App is created for job seekers to test whether their resumes are ATS friendly or not, if our App is able to parse your details and show it, then assume that everything is good.
+## Model used here
+### gemini-pro
+The Gemini-Pro model is an advanced AI-driven tool designed to enhance resume parsing and job matching processes. It leverages state-of-the-art machine learning and natural language processing techniques to provide accurate and detailed insights from resumes and job descriptions.
 
-#### Features: 
-Ability to extract specific information from resumes, the use of JSON format for presenting the extracted data, and the integration of various libraries and tools for parsing resumes.
-
-#### Installation: 
-Run the pip install requirements.txt to install and set up the app, including any dependencies and prerequisites.
-
+Create free access token here https://ai.google.dev/gemini-api/docs/models/gemini
 #### Usage: 
-Just upload your resume in pdf format, and see for yourself :)
+Just upload your resume in pdf format, and see for yourself :
 
 
 ##### Running the program
 
-1. Clone the repository to your local machine
-2. Navigate to the project directory
-3. Install all the required libraries (just run pip install -r /path/to/requirements.txt)
-4. Provide your Open AI API key in the .yaml file
-5. Run the following command to start the chatbot -
-
+1. Clone this Repository
+   ```bash
+   git clone https://github.com/Rajadurai2/Resume-parsing-using-LLM-Langchain.git
+3. Change to the directory 
+   ```bash
+   cd Cricbuzz_ETL_PIpeline_Airflow
+4. Create a pythonvirtual env
+   ```bash
+   python -m venv your_venv_name
+5. activate venv
+   ```bash
+   source env/bin/activate    //linux
+   .env/Scripts/activate.bat  //windows
+6. Install requirements files
+   ```bash
+   pip intall -r requirements.txt
+7. Open config.yaml file and put your api key
+   ```bash
+    GOOGLE_API_KEY: "your-api-key"
+8. run the flask app
     ```
-    python app.py
-    ```
-
-    ```
-    Go to: https://localhost:8000
-    ```
+    python dash.py
     
-Overall, the development of a resume parser app using Flask represents a significant advancement in leveraging technology to support job seekers in optimizing their resumes for the modern recruitment landscape. This app aligns with the increasing demand for efficient and technology-driven solutions in the job application process, ultimately benefiting both job seekers and recruiters.
+    check: https://localhost:5000
+    ```
+### Snapshots
+# index page
+
+<img src="screenshots/image.png">
+
+# Parsing details
+
+<img src="screenshots/details.png">
+
+# Resume scoring and suggestion 
+
+<img src="screenshots/score.png">
