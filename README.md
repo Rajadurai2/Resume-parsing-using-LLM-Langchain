@@ -5,10 +5,6 @@ Traditional ATS systems often require manual adjustments for different job domai
 #### How AI Improves This:: 
 AI-powered resume parsers automatically adapt to various job domains without needing manual adjustments. They use advanced machine learning algorithms and NLP to understand and extract relevant information from resumes across different industries and job roles. This reduces the need for domain-specific customization, streamlining the process and ensuring more consistent and accurate parsing of resumes.
 
-
-### Sneak Peak of the App
-![image](https://github.com/pik1989/Resume-Parser-OpenAI/assets/34673684/5d206207-1b25-4dbe-8e11-add701b632e7)
-
 ## Model used here
 ### gemini-pro
 The Gemini-Pro model is an advanced AI-driven tool designed to enhance resume parsing and job matching processes. It leverages state-of-the-art machine learning and natural language processing techniques to provide accurate and detailed insights from resumes and job descriptions.
