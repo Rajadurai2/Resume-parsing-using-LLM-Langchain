@@ -11,11 +11,9 @@ import io, random
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from langchain_core.output_parsers import JsonOutputParser 
 import json
 api_key = None
-
-
-
 
 def pdf_reader(file):
     resource_manager = PDFResourceManager()
@@ -51,16 +49,17 @@ def parse_data(llm,resume_text):
         "'personDetails', 'skills', 'experiences', 'certifications','qualifications','achievements','projects','hobbies'. "
         "If a field is not available, return it as an empty string or an empty list.\n\n"
         "{resume_text}\n\n"
-        "Output as JSON with the specified keys."
+        "Output as dict with the specified keys."
     )
 )
-
-    parsing_chain = LLMChain(llm=llm, prompt=resume_parsing_prompt)
+    output_parser = JsonOutputParser()
+    parsing_chain = LLMChain(llm=llm, prompt=resume_parsing_prompt,output_parser=output_parser)
     parsed_data = parsing_chain.run({"resume_text": resume_text})
-    parsed_data = json.loads("".join(parsed_data.split("\n")[1:-1]))
+    #parsed_data = json.loads("".join(parsed_data.split("\n")[1:-1]))
     return parsed_data
 
 def get_score(llm,resume_text):
+    output_parser = JsonOutputParser()
     ranking_prompt = PromptTemplate(
     input_variables=["resume_text"],
     template="Rate this resume 0 - 10 for each criteria grammar_mistakes,skills,projects "
@@ -68,12 +67,13 @@ def get_score(llm,resume_text):
         "'grammar_mistakes','skills','projects'. "
     ":\n\n{resume_text}\n\nOutput as dict")
 
-    rank_chain = LLMChain(llm=llm, prompt=ranking_prompt)
+    rank_chain = LLMChain(llm=llm, prompt=ranking_prompt,output_parser=output_parser)
     rank = rank_chain.run({"resume_text":resume_text})
-    rank = json.loads("".join(rank.split("\n")[1:-1]))
+    #rank = json.loads("".join(rank.split("\n")[1:-1]))
     return rank
 
 def get_suggestion(llm,resume_text):
+    #output_parser = JsonOutputParser()
     get_mistakes = PromptTemplate(
     input_variables=["resume_text"],
     template="Tell 10 suggetions to improve this resume:\n\n{resume_text}\n\nOutput as string lists")

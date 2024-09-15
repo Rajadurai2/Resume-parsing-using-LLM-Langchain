@@ -2,5 +2,4 @@ Flask==2.2.5
 langchain==0.2.15
 langchain_google_genai==1.0.10
 pdfminer3==2018.12.3.0
-PyYAML==6.0
 PyYAML==6.0.2
